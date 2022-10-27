@@ -29,7 +29,7 @@ namespace Układanka.Classes
         {
             _isSelected = false;
         }
-        public void DisplayTile(int maxLength) //fasdfasdf
+        public void DisplayTile(int maxLength) // najnowszy bezużyteczny komentarz
         {
             char paddingCharacter = _isSelected ? '*' : ' ';
             string contentToDisplay = Content.ToString();
