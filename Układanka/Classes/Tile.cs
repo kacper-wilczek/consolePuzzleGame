@@ -25,7 +25,7 @@ namespace Układanka.Classes
         {
             _isSelected = true;
         }
-        public void UnselectTile()
+        public void UnselectTile() // komentarz
         {
             _isSelected = false;
         }
