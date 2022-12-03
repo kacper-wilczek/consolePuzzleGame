@@ -8,4 +8,9 @@
 	<ImplicitUsings>disable</ImplicitUsings> <!-- dodane przeze mnie -->
   </PropertyGroup>
 
+  <ItemGroup>
+    <Folder Include="Classes\" />
+    <Folder Include="Interfaces\" />
+  </ItemGroup>
+
 </Project>
