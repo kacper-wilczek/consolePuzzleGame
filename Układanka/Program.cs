@@ -57,7 +57,7 @@ bool SetGameMode()
                 Console.WriteLine("\nWybrano tryb trudny.\n");
                 break;
             default:
-                Console.WriteLine("Wybierz tryb gry!");
+                Console.WriteLine("\nWybierz tryb gry!");
                 break;
         }
     }
@@ -74,6 +74,7 @@ int SetBoardSize()
 
         boardSizeReadSuccessfully = int.TryParse(GetInputFromUser(), out int result);
         readBoardSize = result;
+
         if (!boardSizeReadSuccessfully)
         {
             Console.WriteLine("\nPodaj prawidłowy rozmiar planszy!");
@@ -84,7 +85,6 @@ int SetBoardSize()
         {
             Console.WriteLine("\nPodaj liczbę całkowitą z prawidłowego przedziału!");
             boardSizeReadSuccessfully = false;
-            continue;
         }
     }
     return readBoardSize;
@@ -93,14 +93,17 @@ int SetBoardSize()
 int[] SetUpGameBoard(int boardSize)
 {
     int[] intArray = new int[boardSize * boardSize];
+
     for (int i = 0; i < boardSize * boardSize; i++)
     {
         intArray[i] = i + 1;
     }
+
     do
     {
         RandomizeArray(ref intArray);
     } while (IntArrayIsInAscendingOrder(intArray));
+
     return intArray;
 }
 
@@ -130,9 +133,9 @@ void MakeAMove(int[] gameBoard, int boardSize, bool hardModeOn)
     bool swapSuccessfull = false; // default value
     do // ensure swap is successfull - selected tiles are adjacent on Hard Mode
     {
-        // Select second tile or cancel first tile selection
         do // ensure different tiles are selected
         {
+            // Select second tile or cancel first tile selection
             Console.WriteLine("Wpisz adres pozycji, na którą chcesz przesunąć kafelek.\nWpisz \"X\" aby ponownie wybrać pierwszy kafelek.\n");
             if (!TryReceiveAddressFromUserInput(boardSize, out address, cancelIsAllowed: true))
             {
@@ -145,7 +148,6 @@ void MakeAMove(int[] gameBoard, int boardSize, bool hardModeOn)
                 Console.WriteLine("Wybrano ten sam kafelek!");
                 continue;
             }
-            break;
         } while (secondIndex == firstIndex);
 
         DisplayBoard(gameBoard, new HashSet<int>() { firstIndex, secondIndex });
@@ -210,6 +212,7 @@ bool TryReceiveAddressFromUserInput(int boardSize, out (int column, int row) add
         address = (columnInt, rowInt);
         break;
     }
+
     return true;
 }
 
@@ -230,11 +233,13 @@ bool TrySwapIndexes(int[] arr, int firstIndex, int secondIndex, bool hardModeOn)
     {
         return false;
     }
+
     (arr[secondIndex], arr[firstIndex]) = (arr[firstIndex], arr[secondIndex]);
+
     return true;
 }
 
-bool AreAdjacent(int boardSize, int index1, int index2) // TODO przemyśleć dodatkowe warunki
+bool AreAdjacent(int boardSize, int index1, int index2)
 {
     return index2 == index1 - 1
         || index2 == index1 + 1
@@ -285,13 +290,12 @@ void DisplayBoard(int[] board, HashSet<int>? selectedIndexes = null)
 {
     selectedIndexes ??= new HashSet<int>();
 
-    Console.Clear();
-    Console.WriteLine("Napisz w dowolonym momencie \"exit\" aby zakończyć program lub \"restart\" aby rozpocząć ponownie.\n");
-    //Console.WriteLine();
-
     int boardSize = (int)Math.Sqrt(board.Length);
     int maxRowNumberLength = boardSize.ToString().Length;
     int maxTileContentLength = (boardSize * boardSize).ToString().Length;
+
+    Console.Clear();
+    Console.WriteLine("Napisz w dowolonym momencie \"exit\" aby zakończyć program lub \"restart\" aby rozpocząć ponownie.\n");
 
     // Display row with columns
     WriteColumns(maxRowNumberLength, maxTileContentLength, boardSize);
