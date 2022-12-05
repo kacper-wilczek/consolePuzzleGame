@@ -70,25 +70,22 @@ int SetBoardSize()
     bool boardSizeReadSuccessfully = false;
     while (!boardSizeReadSuccessfully)
     {
-        Console.WriteLine($"Podaj rozmiar planszy. Liczba całkowita od 0 do 26.\n");
+        Console.WriteLine($"Podaj rozmiar planszy. Liczba całkowita od 2 do 26.\n");
 
         boardSizeReadSuccessfully = int.TryParse(GetInputFromUser(), out int result);
         readBoardSize = result;
         if (!boardSizeReadSuccessfully)
         {
             Console.WriteLine("\nPodaj prawidłowy rozmiar planszy!");
-            Console.WriteLine("\n***\n");
             continue;
         }
 
-        if (readBoardSize < 0 || readBoardSize > 26)
+        if (readBoardSize < 2 || readBoardSize > 26)
         {
             Console.WriteLine("\nPodaj liczbę całkowitą z prawidłowego przedziału!");
             boardSizeReadSuccessfully = false;
-            Console.WriteLine("\n***\n");
             continue;
         }
-
     }
     return readBoardSize;
 }
@@ -130,13 +127,14 @@ void MakeAMove(int[] gameBoard, int boardSize, bool hardModeOn)
     DisplayBoard(gameBoard, new HashSet<int>() { firstIndex });
 
     int secondIndex;
-    while (true) // ensure swap is successfull - selected tiles are adjacent on Hard Mode
+    bool swapSuccessfull = false; // default value
+    do // ensure swap is successfull - selected tiles are adjacent on Hard Mode
     {
         // Select second tile or cancel first tile selection
-        while (true) // ensure different tiles are selected
+        do // ensure different tiles are selected
         {
-            Console.WriteLine("Wybierz drugi kafelek");
-            if (!TryReceiveAddressFromUserInput(boardSize, out address))
+            Console.WriteLine("Wpisz adres pozycji, na którą chcesz przesunąć kafelek.\nWpisz \"X\" aby ponownie wybrać pierwszy kafelek.\n");
+            if (!TryReceiveAddressFromUserInput(boardSize, out address, cancelIsAllowed: true))
             {
                 return;
             }
@@ -148,25 +146,26 @@ void MakeAMove(int[] gameBoard, int boardSize, bool hardModeOn)
                 continue;
             }
             break;
-        }
+        } while (secondIndex == firstIndex);
 
         DisplayBoard(gameBoard, new HashSet<int>() { firstIndex, secondIndex });
 
         // Swap selected tiles
-        if (!TrySwapIndexes(gameBoard, firstIndex, secondIndex, hardModeOn))
+        swapSuccessfull = TrySwapIndexes(gameBoard, firstIndex, secondIndex, hardModeOn);
+        if (!swapSuccessfull) // On Hard Mode -> swap selection if the second tile was not adjacent to the first tile and continue selecting the second tile
         {
-            Console.WriteLine("Kafelki nie leżą obok siebie!");
             firstIndex = secondIndex;
             DisplayBoard(gameBoard, new HashSet<int>() { firstIndex });
-            continue;
+            Console.WriteLine("Kafelki nie leżą obok siebie!");
         }
-
-        DisplaySwappingAnimation(gameBoard, firstIndex, secondIndex);
-        break;
-    }
+        else
+        {
+            DisplaySwappingAnimation(gameBoard, firstIndex, secondIndex);
+        }
+    } while (!swapSuccessfull);
 }
 
-bool TryReceiveAddressFromUserInput(int boardSize, out (int column, int row) address)
+bool TryReceiveAddressFromUserInput(int boardSize, out (int column, int row) address, bool cancelIsAllowed = false)
 {
     string input;
     address = (1, 1); // default value
@@ -176,7 +175,7 @@ bool TryReceiveAddressFromUserInput(int boardSize, out (int column, int row) add
     {
         input = GetInputFromUser().ToUpper();
         
-        if (PlayerWantsToCancelSelection(input))
+        if (cancelIsAllowed && PlayerWantsToCancelSelection(input))
         {
             return false;
         }
@@ -199,7 +198,7 @@ bool TryReceiveAddressFromUserInput(int boardSize, out (int column, int row) add
             continue;
         }
 
-        int columnInt = Convert.ToChar(matchColumn.Value) - 'A' + 1;
+        int columnInt = Convert.ToChar(matchColumn.Value) - 'A' + 1; // convert column letter to column number
         int.TryParse(matchRow.Value, out int rowInt);
 
         if (!IsInRange(columnInt, boardSize) || !IsInRange(rowInt, boardSize))
@@ -287,7 +286,8 @@ void DisplayBoard(int[] board, HashSet<int>? selectedIndexes = null)
     selectedIndexes ??= new HashSet<int>();
 
     Console.Clear();
-    Console.WriteLine();
+    Console.WriteLine("Napisz w dowolonym momencie \"exit\" aby zakończyć program lub \"restart\" aby rozpocząć ponownie.\n");
+    //Console.WriteLine();
 
     int boardSize = (int)Math.Sqrt(board.Length);
     int maxRowNumberLength = boardSize.ToString().Length;
