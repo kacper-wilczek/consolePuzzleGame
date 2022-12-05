@@ -304,7 +304,7 @@ void DisplayBoard(int[] board, HashSet<int>? selectedIndexes = null)
     // Row number loop
     for (int i = 0; i < boardSize; i++)
     {
-        WriteRowNumber(i + 1, maxRowNumberLength);
+        WriteRowNumbersColumn((i + 1).ToString(), maxRowNumberLength);
 
         // Column loop
         for (int j = 0; j < boardSize; j++)
@@ -323,10 +323,7 @@ void DisplayBoard(int[] board, HashSet<int>? selectedIndexes = null)
 
 void WriteColumns(int maxRowLength, int maxTileLength, int boardSize)
 {
-    string rowsColumn = " ";
-    rowsColumn = rowsColumn.PadLeft(maxRowLength + 1);
-    rowsColumn = rowsColumn.PadRight(rowsColumn.Length + 1);
-    Console.Write($"|{rowsColumn}||");
+    WriteRowNumbersColumn(" ", maxRowLength);
 
     for (int i = 0; i < boardSize; i++)
     {
@@ -346,10 +343,7 @@ void WriteSeparator(int maxRowLength, int maxTileLength, int boardSize)
 {
     Console.WriteLine();
 
-    string rowsColumn = "-";
-    rowsColumn = rowsColumn.PadLeft(maxRowLength + 1, '-');
-    rowsColumn = rowsColumn.PadRight(rowsColumn.Length + 1, '-');
-    Console.Write($"|{rowsColumn}||");
+    WriteRowNumbersColumn("-", maxRowLength, '-');
 
     string columnsSeparator = "-";
     columnsSeparator = columnsSeparator.PadLeft(maxTileLength + 1, '-');
@@ -363,12 +357,11 @@ void WriteSeparator(int maxRowLength, int maxTileLength, int boardSize)
     Console.WriteLine("");
 }
 
-void WriteRowNumber(int rowNumber, int maxRowLength)
+void WriteRowNumbersColumn(string content, int maxLength, char paddingChar = ' ')
 {
-    string rowNumberString = rowNumber.ToString();
-    rowNumberString = rowNumberString.PadLeft(maxRowLength + 1);
-    rowNumberString = rowNumberString.PadRight(rowNumberString.Length + 1);
-    Console.Write($"|{rowNumberString}||");
+    content = content.PadLeft(maxLength + 1, paddingChar);
+    content = content.PadRight(content.Length + 1, paddingChar);
+    Console.Write($"|{content}||");
 }
 
 void DisplayTile(string content, bool isSelected, int maxLength)
