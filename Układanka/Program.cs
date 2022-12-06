@@ -14,25 +14,30 @@ using System.Text.RegularExpressions;
 
 while (true)
 {
+    // utworzenie View, Model i Controller
+
     Console.Clear();
     Console.WriteLine("Napisz w dowolonym momencie \"exit\" aby zakończyć program lub \"restart\" aby rozpocząć ponownie.\n");
 
+    // set up game
     bool hardModeOn = SetGameMode();
     
     int boardSize = SetBoardSize();
 
     int[] gameBoard = SetUpGameBoard(boardSize);
 
-    while (!IntArrayIsInAscendingOrder(gameBoard))
+    // start game
+    while (!IntArrayIsInAscendingOrder(gameBoard)) // dostęp do warunku z modelu przez kontroler
     {
         MakeAMove(gameBoard, boardSize, hardModeOn);
     }
 
+    // victory
     DisplayVictoryAnimationAndMessage(gameBoard);
     Console.ReadKey(true);
 }
 
-bool SetGameMode()
+bool SetGameMode() // Controller jako część metody ustawiającej planszę
 {
     Console.WriteLine("Wybierz tryb gry:");
     Console.WriteLine("1. Łatwy - kolejność kafelków można zamieniać dowolnie");
@@ -64,7 +69,7 @@ bool SetGameMode()
     return hardModeOn;
 }
 
-int SetBoardSize()
+int SetBoardSize() // Controller jako część metody ustawiającej planszę
 {
     int readBoardSize = 0; // default value
     bool boardSizeReadSuccessfully = false;
