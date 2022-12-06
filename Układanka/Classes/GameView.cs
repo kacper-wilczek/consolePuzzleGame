@@ -115,20 +115,29 @@ namespace Układanka.Classes
                     continue;
                 }
 
-                Match matchColumn = Regex.Match(input, @"^[A-Z](?=\d+$)"); // match column given first in input
-                matchColumn = matchColumn.Success ? matchColumn : Regex.Match(input, @"(?<=^\d+)[A-Z]$"); // match column given last in input
+                Match matchColumnRow = Regex.Match(input, @"^([A-Z])(\d+)$");
+                Match matchRowColumn = Regex.Match(input, @"^(\d+)([A-Z])$");
 
-                Match matchRow = Regex.Match(input, @"^\d+(?=[A-Z]$)"); // match row given first in input
-                matchRow = matchRow.Success ? matchRow : Regex.Match(input, @"(?<=^[A-Z])\d+$"); // match row given last in input
+                string column, row;
 
-                if (!matchColumn.Success || !matchRow.Success)
+                if (matchColumnRow.Success)
+                {
+                    column = matchColumnRow.Groups[1].Value;
+                    row = matchColumnRow.Groups[2].Value;
+                }
+                else if (matchRowColumn.Success)
+                {
+                    row = matchRowColumn.Groups[1].Value;
+                    column = matchRowColumn.Groups[2].Value;
+                }
+                else
                 {
                     DisplayPrompt_WrongTileAddress();
                     continue;
                 }
 
-                int columnInt = Convert.ToChar(matchColumn.Value) - 'A' + 1; // convert column letter to column number
-                int.TryParse(matchRow.Value, out int rowInt);
+                int columnInt = Convert.ToChar(column) - 'A' + 1; // convert column letter to column number
+                int.TryParse(row, out int rowInt);
 
                 if (!IsInRange(columnInt, boardSize) || !IsInRange(rowInt, boardSize))
                 {

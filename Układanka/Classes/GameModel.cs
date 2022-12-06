@@ -50,10 +50,6 @@ namespace Układanka.Classes
             Random randomNumberGenerator = new Random();
             arr = arr.OrderBy(e => randomNumberGenerator.Next()).ToArray();
         }
-        public int FetchContentForGivenAddress((int column, int row) address)
-        {
-            return Board[ConvertAddresToIndex(address)];
-        }
         public bool TrySwapTiles((int column, int row) address1, (int column, int row) address2)
         {
             int index1 = ConvertAddresToIndex(address1);

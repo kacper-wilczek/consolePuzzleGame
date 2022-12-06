@@ -10,54 +10,54 @@ namespace Układanka.Classes
     {
         public GameController(GameModel model, GameView view)
         {
-            GameModel = model;
-            GameView = view;
+            gameModel = model;
+            gameView = view;
         }
-        GameModel GameModel { get; init; }
-        GameView GameView { get; init; }
-        public void MakeAMove(int[] gameBoard, int boardSize, bool hardModeOn)
+        private readonly GameModel gameModel;
+        private readonly GameView gameView;
+        public void MakeAMove()
         {
-            GameView.DisplayBoard(GameModel.Board, GameModel.BoardSize);
+            gameView.DisplayBoard(gameModel.Board, gameModel.BoardSize);
 
             // Select first tile
-            GameView.DisplayPrompt_SelectFirstTile();
-            GameView.TryReceiveAddressFromUserInput(GameModel.BoardSize, out (int column, int row) firstAddress);
-            GameView.DisplayBoard(GameModel.Board, GameModel.BoardSize, new HashSet<(int, int)>() { firstAddress });
+            gameView.DisplayPrompt_SelectFirstTile();
+            gameView.TryReceiveAddressFromUserInput(gameModel.BoardSize, out (int column, int row) firstAddress);
+            gameView.DisplayBoard(gameModel.Board, gameModel.BoardSize, new HashSet<(int, int)>() { firstAddress });
 
             (int column, int row) secondAddress;
-            bool swapSuccessfull = false; // default value
+            bool swapSuccessfull;
             do // ensure swap is successfull - selected tiles are adjacent on Hard Mode
             {
                 do // ensure different tiles are selected
                 {
                     // Select second tile or cancel first tile selection
-                    GameView.DisplayPrompt_SelectSecondTileOrCancelFirstTileSelection();
-                    if (!GameView.TryReceiveAddressFromUserInput(GameModel.BoardSize, out secondAddress, cancelIsAllowed: true))
+                    gameView.DisplayPrompt_SelectSecondTileOrCancelFirstTileSelection();
+                    if (!gameView.TryReceiveAddressFromUserInput(gameModel.BoardSize, out secondAddress, cancelIsAllowed: true))
                     {
                         return;
                     }
 
                     if (secondAddress == firstAddress)
                     {
-                        GameView.DisplayPrompt_SameTilesSelected();
+                        gameView.DisplayPrompt_SameTilesSelected();
                         continue;
                     }
                 } while (secondAddress == firstAddress);
 
-                GameView.DisplayBoard(GameModel.Board, GameModel.BoardSize, new HashSet<(int, int)>() { firstAddress, secondAddress });
+                gameView.DisplayBoard(gameModel.Board, gameModel.BoardSize, new HashSet<(int, int)>() { firstAddress, secondAddress });
 
                 // Swap selected tiles
-                swapSuccessfull = GameModel.TrySwapTiles(firstAddress, secondAddress);
+                swapSuccessfull = gameModel.TrySwapTiles(firstAddress, secondAddress);
                 if (!swapSuccessfull) // On Hard Mode -> swap selection if the second tile was not adjacent to the first tile and continue selecting the second tile
                 {
                     firstAddress = secondAddress;
-                    GameView.DisplayBoard(GameModel.Board, GameModel.BoardSize, new HashSet<(int, int)>() { firstAddress });
-                    GameView.DisplayBoard(GameModel.Board, GameModel.BoardSize, new HashSet<(int, int)>() { firstAddress });
-                    GameView.DisplayPrompt_TilesNotAdjacent();
+                    gameView.DisplayBoard(gameModel.Board, gameModel.BoardSize, new HashSet<(int, int)>() { firstAddress });
+                    gameView.DisplayBoard(gameModel.Board, gameModel.BoardSize, new HashSet<(int, int)>() { firstAddress });
+                    gameView.DisplayPrompt_TilesNotAdjacent();
                 }
                 else
                 {
-                    GameView.DisplaySwappingAnimation(GameModel.Board, GameModel.BoardSize, firstAddress, secondAddress);
+                    gameView.DisplaySwappingAnimation(gameModel.Board, gameModel.BoardSize, firstAddress, secondAddress);
                 }
             } while (!swapSuccessfull);
         }

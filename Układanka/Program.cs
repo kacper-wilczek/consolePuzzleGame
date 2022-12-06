@@ -17,17 +17,17 @@ while (true)
 {
     GameView gameView = new();
 
-    gameView.SetUpGameOptions(out bool hardModeOn, out int boardSize);
-
     gameView.Reset();
     gameView.DisplayPrompt_ExitOrRestartInformation();
     
+    gameView.SetUpGameOptions(out bool hardModeOn, out int boardSize);
+
     GameModel gameModel = new(hardModeOn, boardSize);
     GameController gameController = new(gameModel, gameView);
 
     while (!gameModel.BoardIsInOrder)
     {
-        gameController.MakeAMove(gameModel.Board, gameModel.BoardSize, gameModel.HardModeOn);
+        gameController.MakeAMove();
     }
 
     gameView.DisplayVictoryAnimationAndMessage(gameModel.Board, gameModel.BoardSize);
