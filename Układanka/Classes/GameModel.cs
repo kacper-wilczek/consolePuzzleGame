@@ -47,13 +47,13 @@ namespace Układanka.Classes
         }
         private void RandomizeArray(ref int[] arr)
         {
-            Random randomNumberGenerator = new Random();
+            Random randomNumberGenerator = new();
             arr = arr.OrderBy(e => randomNumberGenerator.Next()).ToArray();
         }
         public bool TrySwapTiles((int column, int row) address1, (int column, int row) address2)
         {
-            int index1 = ConvertAddresToIndex(address1);
-            int index2 = ConvertAddresToIndex(address2);
+            int index1 = Program.ConvertAddresToIndex(address1, BoardSize);
+            int index2 = Program.ConvertAddresToIndex(address2, BoardSize);
 
             if (HardModeOn && !AreAdjacent(index1, index2))
             {
@@ -70,10 +70,6 @@ namespace Układanka.Classes
                 || index2 == index1 + 1
                 || index2 == index1 - BoardSize
                 || index2 == index1 + BoardSize;
-        }
-        private int ConvertAddresToIndex((int column, int row) address)
-        {
-            return (address.row - 1) * BoardSize + (address.column - 1);
         }
     }
 }

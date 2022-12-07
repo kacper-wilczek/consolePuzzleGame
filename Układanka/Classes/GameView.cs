@@ -11,10 +11,16 @@ namespace Układanka.Classes
 {
     public class GameView
     {
+        private int boardSize;
+        private int maxRowNumberLength;
+        private int maxTileContentLength;
         public void SetUpGameOptions(out bool hardModeOn, out int boardSize)
         {
             hardModeOn = SetGameMode();
             boardSize = SetBoardSize();
+            this.boardSize = boardSize;
+            maxRowNumberLength = boardSize.ToString().Length;
+            maxTileContentLength = (boardSize * boardSize).ToString().Length;
         }
         string GetInputFromUser()
         {
@@ -94,11 +100,10 @@ namespace Układanka.Classes
             }
             return readBoardSize;
         }
-        public bool TryReceiveAddressFromUserInput(int boardSize, out (int column, int row) address, bool cancelIsAllowed = false)
+        public bool TryReceiveAddressFromUserInput(out (int column, int row) address, bool cancelIsAllowed = false)
         {
             string input;
             address = (1, 1); // default value
-            int maxRowNumberLength = boardSize.ToString().Length;
 
             while (true) // ensure correct address is provided
             {
@@ -160,65 +165,62 @@ namespace Układanka.Classes
         {
             return number > 0 && number <= maxNumber;
         }
-        public void DisplayBoard(int[] board, int boardSize, HashSet<(int, int)>? selectedAddressess = null)
+        public void DisplayBoard(int[] board, HashSet<(int, int)>? selectedAddressess = null)
         {
             selectedAddressess ??= new HashSet<(int column, int row)>();
-
-            int maxRowNumberLength = boardSize.ToString().Length;
-            int maxTileContentLength = (boardSize * boardSize).ToString().Length;
 
             Reset();
             DisplayPrompt_ExitOrRestartInformation();
             
             // Display row with columns
-            WriteColumns(maxRowNumberLength, maxTileContentLength, boardSize);
-            WriteSeparator(maxRowNumberLength, maxTileContentLength, boardSize);
+            WriteColumns();
+            WriteSeparator();
 
             // Row number loop
             for (int i = 0; i < boardSize; i++)
             {
-                WriteRowNumbersColumn((i + 1).ToString(), maxRowNumberLength);
+                WriteRowNumbersColumn((i + 1).ToString());
 
                 // Column loop
                 for (int j = 0; j < boardSize; j++)
                 {
                     (int column, int row) currentAddress = (j + 1, i + 1);
-                    int currentIndex = (currentAddress.row - 1) * boardSize + (currentAddress.column - 1);
+                    int currentIndex = Program.ConvertAddresToIndex(currentAddress, boardSize);
                     string currentTileContent = board[currentIndex].ToString();
 
                     bool currentAddressIsSelected = selectedAddressess.Contains(currentAddress);
 
-                    DisplayTile(currentTileContent, currentAddressIsSelected, maxTileContentLength);
+                    DisplayTile(currentTileContent, currentAddressIsSelected);
                 }
 
-                WriteSeparator(maxRowNumberLength, maxTileContentLength, boardSize);
+                WriteSeparator();
             }
         }
-        private void WriteColumns(int maxRowLength, int maxTileLength, int boardSize)
+        private void WriteColumns()
         {
-            WriteRowNumbersColumn(" ", maxRowLength);
+            WriteRowNumbersColumn(" ");
 
             for (int i = 0; i < boardSize; i++)
             {
                 string columnString = ((char)('A' + i)).ToString();
-                int offset = (maxTileLength - columnString.Length) / 2;
+                int offset = (maxTileContentLength - columnString.Length) / 2;
 
                 columnString = columnString.PadRight(columnString.Length + offset);
-                columnString = columnString.PadLeft(maxTileLength);
+                columnString = columnString.PadLeft(maxTileContentLength);
                 columnString = columnString.PadRight(columnString.Length + 1);
                 columnString = columnString.PadLeft(columnString.Length + 1);
 
                 Console.Write($"{columnString}|");
             }
         }
-        private void WriteSeparator(int maxRowLength, int maxTileLength, int boardSize)
+        private void WriteSeparator()
         {
             Console.WriteLine();
 
-            WriteRowNumbersColumn("-", maxRowLength, '-');
+            WriteRowNumbersColumn("-", '-');
 
             string columnsSeparator = "-";
-            columnsSeparator = columnsSeparator.PadLeft(maxTileLength + 1, '-');
+            columnsSeparator = columnsSeparator.PadLeft(maxTileContentLength + 1, '-');
             columnsSeparator = columnsSeparator.PadRight(columnsSeparator.Length + 1, '-');
 
             for (int i = 0; i < boardSize; i++)
@@ -228,31 +230,31 @@ namespace Układanka.Classes
 
             Console.WriteLine("");
         }
-        private void WriteRowNumbersColumn(string content, int maxLength, char paddingChar = ' ')
+        private void WriteRowNumbersColumn(string content, char paddingChar = ' ')
         {
-            content = content.PadLeft(maxLength + 1, paddingChar);
+            content = content.PadLeft(maxRowNumberLength + 1, paddingChar);
             content = content.PadRight(content.Length + 1, paddingChar);
             Console.Write($"|{content}||");
         }
-        private void DisplayTile(string content, bool isSelected, int maxLength)
+        private void DisplayTile(string content, bool isSelected)
         {
             char paddingChar = isSelected ? '*' : ' ';
 
-            int offset = (maxLength - content.Length) / 2;
+            int offset = (maxTileContentLength - content.Length) / 2;
 
             content = content.PadRight(content.Length + offset, paddingChar);
-            content = content.PadLeft(maxLength, paddingChar);
+            content = content.PadLeft(maxTileContentLength, paddingChar);
             content = content.PadRight(content.Length + 1, paddingChar);
             content = content.PadLeft(content.Length + 1, paddingChar);
 
             Console.Write($"{content}|");
         }
-        public void DisplaySwappingAnimation(int[] gameBoard, int boardSize, (int, int) firstSelectedAddress, (int, int) secondSelectedAddress)
+        public void DisplaySwappingAnimation(int[] board, (int, int) firstSelectedAddress, (int, int) secondSelectedAddress)
         {
             Thread.Sleep(250);
-            DisplayBoard(gameBoard, boardSize,  new HashSet<(int, int)>() { firstSelectedAddress, secondSelectedAddress});
+            DisplayBoard(board, new HashSet<(int, int)>() { firstSelectedAddress, secondSelectedAddress});
             Thread.Sleep(250);
-            DisplayBoard(gameBoard, boardSize);
+            DisplayBoard(board);
         }
         public void DisplayVictoryAnimationAndMessage(int[] board, int boardSize)
         {
@@ -269,9 +271,9 @@ namespace Układanka.Classes
             for (int i = 0; i < 2; i++)
             {
                 Thread.Sleep(250);
-                DisplayBoard(board, boardSize, allAddresses);
+                DisplayBoard(board, allAddresses);
                 Thread.Sleep(250);
-                DisplayBoard(board, boardSize);
+                DisplayBoard(board);
             }
 
             Console.WriteLine("Gratulacje! Wygrałeś.\nWciśnij dowolny klawisz, aby kontynować.");

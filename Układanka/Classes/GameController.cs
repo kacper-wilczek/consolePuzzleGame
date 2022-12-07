@@ -17,12 +17,12 @@ namespace Układanka.Classes
         private readonly GameView gameView;
         public void MakeAMove()
         {
-            gameView.DisplayBoard(gameModel.Board, gameModel.BoardSize);
+            gameView.DisplayBoard(gameModel.Board);
 
             // Select first tile
             gameView.DisplayPrompt_SelectFirstTile();
-            gameView.TryReceiveAddressFromUserInput(gameModel.BoardSize, out (int column, int row) firstAddress);
-            gameView.DisplayBoard(gameModel.Board, gameModel.BoardSize, new HashSet<(int, int)>() { firstAddress });
+            gameView.TryReceiveAddressFromUserInput(out (int column, int row) firstAddress);
+            gameView.DisplayBoard(gameModel.Board, new HashSet<(int, int)>() { firstAddress });
 
             (int column, int row) secondAddress;
             bool swapSuccessfull;
@@ -32,7 +32,7 @@ namespace Układanka.Classes
                 {
                     // Select second tile or cancel first tile selection
                     gameView.DisplayPrompt_SelectSecondTileOrCancelFirstTileSelection();
-                    if (!gameView.TryReceiveAddressFromUserInput(gameModel.BoardSize, out secondAddress, cancelIsAllowed: true))
+                    if (!gameView.TryReceiveAddressFromUserInput(out secondAddress, cancelIsAllowed: true))
                     {
                         return;
                     }
@@ -44,20 +44,20 @@ namespace Układanka.Classes
                     }
                 } while (secondAddress == firstAddress);
 
-                gameView.DisplayBoard(gameModel.Board, gameModel.BoardSize, new HashSet<(int, int)>() { firstAddress, secondAddress });
+                gameView.DisplayBoard(gameModel.Board, new HashSet<(int, int)>() { firstAddress, secondAddress });
 
                 // Swap selected tiles
                 swapSuccessfull = gameModel.TrySwapTiles(firstAddress, secondAddress);
                 if (!swapSuccessfull) // On Hard Mode -> swap selection if the second tile was not adjacent to the first tile and continue selecting the second tile
                 {
                     firstAddress = secondAddress;
-                    gameView.DisplayBoard(gameModel.Board, gameModel.BoardSize, new HashSet<(int, int)>() { firstAddress });
-                    gameView.DisplayBoard(gameModel.Board, gameModel.BoardSize, new HashSet<(int, int)>() { firstAddress });
+                    gameView.DisplayBoard(gameModel.Board, new HashSet<(int, int)>() { firstAddress });
+                    gameView.DisplayBoard(gameModel.Board, new HashSet<(int, int)>() { firstAddress });
                     gameView.DisplayPrompt_TilesNotAdjacent();
                 }
                 else
                 {
-                    gameView.DisplaySwappingAnimation(gameModel.Board, gameModel.BoardSize, firstAddress, secondAddress);
+                    gameView.DisplaySwappingAnimation(gameModel.Board, firstAddress, secondAddress);
                 }
             } while (!swapSuccessfull);
         }
