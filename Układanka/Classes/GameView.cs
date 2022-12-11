@@ -185,7 +185,7 @@ namespace Układanka.Classes
                 for (int j = 0; j < boardSize; j++)
                 {
                     (int column, int row) currentAddress = (j + 1, i + 1);
-                    int currentIndex = Program.ConvertAddresToIndex(currentAddress, boardSize);
+                    int currentIndex = Program.ConvertAddressToIndex(currentAddress, boardSize);
                     string currentTileContent = board[currentIndex].ToString();
 
                     bool currentAddressIsSelected = selectedAddressess.Contains(currentAddress);
@@ -285,7 +285,7 @@ namespace Układanka.Classes
         }
         public void DisplayPrompt_ExitOrRestartInformation()
         {
-            Console.WriteLine("Napisz w dowolonym momencie \"exit\" aby zakończyć program lub \"restart\" aby rozpocząć ponownie.\n");
+            Console.WriteLine("Napisz w dowolnym momencie \"exit\" aby zakończyć program lub \"restart\" aby rozpocząć ponownie.\n");
         }
         private void DisplayPrompt_SelectGameMode()
         {

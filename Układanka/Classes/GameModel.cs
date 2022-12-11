@@ -14,7 +14,7 @@ namespace Układanka.Classes
             BoardSize = boardSize;
             Board = SetUpGameBoard(boardSize);
         }
-        public bool HardModeOn { get; init; }
+        private bool HardModeOn { get; init; }
         public int BoardSize { get; init; }
         public int[] Board { get; init; }
         public bool BoardIsInOrder { get => IntArrayIsInAscendingOrder(Board); }
@@ -38,7 +38,7 @@ namespace Układanka.Classes
         {
             for (int i = 1; i < arr.Length; i++)
             {
-                if (arr[i - 1] > arr[i])
+                if (arr[i - 1] >= arr[i])
                 {
                     return false;
                 }
@@ -52,8 +52,8 @@ namespace Układanka.Classes
         }
         public bool TrySwapTiles((int column, int row) address1, (int column, int row) address2)
         {
-            int index1 = Program.ConvertAddresToIndex(address1, BoardSize);
-            int index2 = Program.ConvertAddresToIndex(address2, BoardSize);
+            int index1 = Program.ConvertAddressToIndex(address1, BoardSize);
+            int index2 = Program.ConvertAddressToIndex(address2, BoardSize);
 
             if (HardModeOn && !AreAdjacent(index1, index2))
             {

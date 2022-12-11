@@ -25,8 +25,8 @@ namespace Układanka.Classes
             gameView.DisplayBoard(gameModel.Board, new HashSet<(int, int)>() { firstAddress });
 
             (int column, int row) secondAddress;
-            bool swapSuccessfull;
-            do // ensure swap is successfull - selected tiles are adjacent on Hard Mode
+            bool swapSuccessful;
+            do // ensure swap is successful - selected tiles are adjacent on Hard Mode
             {
                 do // ensure different tiles are selected
                 {
@@ -47,8 +47,8 @@ namespace Układanka.Classes
                 gameView.DisplayBoard(gameModel.Board, new HashSet<(int, int)>() { firstAddress, secondAddress });
 
                 // Swap selected tiles
-                swapSuccessfull = gameModel.TrySwapTiles(firstAddress, secondAddress);
-                if (!swapSuccessfull) // On Hard Mode -> swap selection if the second tile was not adjacent to the first tile and continue selecting the second tile
+                swapSuccessful = gameModel.TrySwapTiles(firstAddress, secondAddress);
+                if (!swapSuccessful) // On Hard Mode -> swap selection if the second tile was not adjacent to the first tile and continue selecting the second tile
                 {
                     firstAddress = secondAddress;
                     gameView.DisplayBoard(gameModel.Board, new HashSet<(int, int)>() { firstAddress });
@@ -59,7 +59,7 @@ namespace Układanka.Classes
                 {
                     gameView.DisplaySwappingAnimation(gameModel.Board, firstAddress, secondAddress);
                 }
-            } while (!swapSuccessfull);
+            } while (!swapSuccessful);
         }
     }
 }

@@ -16,7 +16,7 @@ using System.Globalization;
 
 internal class Program
 {
-    public static int ConvertAddresToIndex((int column, int row) address, int boardSize)
+    public static int ConvertAddressToIndex((int column, int row) address, int boardSize)
     {
         return (address.row - 1) * boardSize + (address.column - 1);
     }
