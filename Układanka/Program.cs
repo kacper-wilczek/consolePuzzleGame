@@ -118,7 +118,7 @@ internal class Program
         {
             for (int i = 1; i < arr.Length; i++)
             {
-                if (arr[i - 1] > arr[i])
+                if (arr[i - 1] >= arr[i])
                 {
                     return false;
                 }
@@ -133,12 +133,12 @@ internal class Program
             // Select first tile
             Console.WriteLine("Wybierz pierwszy kafelek");
             TryReceiveAddressFromUserInput(out (int column, int row) address);
-            int firstIndex = ConvertAddresToIndex(address);
+            int firstIndex = ConvertAddressToIndex(address);
             DisplayBoard(new HashSet<int>() { firstIndex });
 
             int secondIndex;
-            bool swapSuccessfull = false; // default value
-            do // ensure swap is successfull - selected tiles are adjacent on Hard Mode
+            bool swapSuccessful = false; // default value
+            do // ensure swap is successful - selected tiles are adjacent on Hard Mode
             {
                 do // ensure different tiles are selected
                 {
@@ -148,7 +148,7 @@ internal class Program
                     {
                         return;
                     }
-                    secondIndex = ConvertAddresToIndex(address);
+                    secondIndex = ConvertAddressToIndex(address);
 
                     if (secondIndex == firstIndex)
                     {
@@ -160,8 +160,8 @@ internal class Program
                 DisplayBoard(new HashSet<int>() { firstIndex, secondIndex });
 
                 // Swap selected tiles
-                swapSuccessfull = TrySwapIndexes(firstIndex, secondIndex);
-                if (!swapSuccessfull) // On Hard Mode -> swap selection if the second tile was not adjacent to the first tile and continue selecting the second tile
+                swapSuccessful = TrySwapIndexes(firstIndex, secondIndex);
+                if (!swapSuccessful) // On Hard Mode -> swap selection if the second tile was not adjacent to the first tile and continue selecting the second tile
                 {
                     firstIndex = secondIndex;
                     DisplayBoard(new HashSet<int>() { firstIndex });
@@ -171,7 +171,7 @@ internal class Program
                 {
                     DisplaySwappingAnimation(firstIndex, secondIndex);
                 }
-            } while (!swapSuccessfull);
+            } while (!swapSuccessful);
         }
 
         bool TryReceiveAddressFromUserInput(out (int column, int row) address, bool cancelIsAllowed = false)
@@ -254,7 +254,7 @@ internal class Program
                 || index2 == index1 + boardSize;
         }
 
-        int ConvertAddresToIndex((int column, int row) address)
+        int ConvertAddressToIndex((int column, int row) address)
         {
             return (address.row - 1) * boardSize + (address.column - 1);
         }
@@ -301,7 +301,7 @@ internal class Program
             int maxTileContentLength = (boardSize * boardSize).ToString().Length;
 
             Console.Clear();
-            Console.WriteLine("Napisz w dowolonym momencie \"exit\" aby zakończyć program lub \"restart\" aby rozpocząć ponownie.\n");
+            Console.WriteLine("Napisz w dowolnym momencie \"exit\" aby zakończyć program lub \"restart\" aby rozpocząć ponownie.\n");
 
             // Display row with columns
             WriteColumns(maxRowNumberLength, maxTileContentLength, boardSize);
@@ -315,7 +315,7 @@ internal class Program
                 // Column loop
                 for (int j = 0; j < boardSize; j++)
                 {
-                    int currentIndex = ConvertAddresToIndex((j + 1, i + 1));
+                    int currentIndex = ConvertAddressToIndex((j + 1, i + 1));
                     string currentTileContent = gameBoard[currentIndex].ToString();
 
                     bool currentIndexIsSelected = selectedIndexes.Contains(currentIndex);
